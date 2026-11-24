@@ -62,6 +62,15 @@ jobs:
             -DCISTA_64BIT_OFFSET=ON
           cmake --build build --target cista-interop
 
+      - name: "[fork only] -m32 without -malign-double hits the static_assert"
+        if: matrix.name == 'linux-x86'
+        run: |
+          cmake -S . -B build-no-align -DCMAKE_BUILD_TYPE=Release -DCISTA_FMT=OFF             -DCMAKE_C_FLAGS=-m32 -DCMAKE_CXX_FLAGS=-m32 -DCISTA_64BIT_OFFSET=ON
+          if cmake --build build-no-align --target cista-interop > no-align.log 2>&1; then
+            echo "expected the static_assert to fail"; exit 1
+          fi
+          grep "malign-double" no-align.log
+
       - name: Write
         shell: bash
         run: |
