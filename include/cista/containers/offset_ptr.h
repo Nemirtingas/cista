@@ -14,8 +14,10 @@
 namespace cista {
 
 #if __cpp_lib_bit_cast
+// Through uintptr_t: offset_t can be wider than a pointer (a 64 bits offset_t on a 32 bits target, for 32/64 bits interop), and
+// std::bit_cast needs both sizes equal. The zero extension matches the memcpy version below.
 inline offset_t to_offset(void const* ptr) noexcept {
-  return std::bit_cast<offset_t>(ptr);
+  return static_cast<offset_t>(std::bit_cast<std::uintptr_t>(ptr));
 }
 #else
 inline offset_t to_offset(void const* ptr) noexcept {
