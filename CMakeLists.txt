@@ -132,6 +132,10 @@ if(CISTA_COVERAGE)
   set_target_properties(cista-test PROPERTIES LINK_FLAGS --coverage)
 endif()
 
+add_executable(cista-interop EXCLUDE_FROM_ALL tools/interop/interop.cc)
+target_link_libraries(cista-interop cista)
+target_compile_options(cista-interop PRIVATE ${cista-compile-flags})
+
 add_executable(cista-test-23 EXCLUDE_FROM_ALL ${cista-test-files})
 target_compile_options(cista-test-23 PRIVATE ${cista-compile-flags})
 target_link_libraries(cista-test-23 cista-doctest cista)
