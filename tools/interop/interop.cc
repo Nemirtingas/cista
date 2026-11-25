@@ -7,6 +7,7 @@
 #include <cstdio>
 #include <array>
 #include <fstream>
+#include <functional>
 #include <iterator>
 #include <string_view>
 
@@ -114,7 +115,7 @@ payload make_payload() {
   p.bitset_.set(3U);
   p.bitset_.set(99U);
   p.before_strong_ = 2U;
-  p.strong_ = cista::strong<std::int64_t, struct strong_tag>{-3LL << 40U};
+  p.strong_ = cista::strong<std::int64_t, struct strong_tag>{-(3LL << 40U)};
   p.opt_array_ = std::array<double, 2>{1.5, -2.5};
   for (auto i = 0; i != 20; ++i) {
     p.pair_map_.emplace(
@@ -125,7 +126,7 @@ payload make_payload() {
   return p;
 }
 
-int g_errors = 0;
+static int g_errors = 0;
 
 void check(bool const ok, char const* what) {
   if (!ok) {
@@ -179,7 +180,8 @@ void check_equal(payload const& a, payload const& e) {
   }
   check(cista::get<0>(a.tuple_) == cista::get<0>(e.tuple_) &&
             cista::get<1>(a.tuple_) == cista::get<1>(e.tuple_) &&
-            cista::get<2>(a.tuple_) == cista::get<2>(e.tuple_),
+            std::equal_to<double>{}(cista::get<2>(a.tuple_),
+                                    cista::get<2>(e.tuple_)),
         "tuple");
   check(a.bitvec_ == e.bitvec_, "bitvec");
   check(a.before_bitset_ == e.before_bitset_ && a.bitset_ == e.bitset_,

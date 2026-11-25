@@ -18,7 +18,7 @@ jobs:
 
       - name: Build
         run: |
-          cmake -S . -B build -DCMAKE_BUILD_TYPE=${{ matrix.mode }} -DCISTA_FMT=OFF
+          cmake -S . -B build -DCMAKE_BUILD_TYPE=${{ matrix.mode }} -DCISTA_FMT=OFF -DCMAKE_CXX_FLAGS="-Wno-poison-system-directories"
           cmake --build build --target cista-test cista-test-single-header cista-abi-test -j 4
 
       - name: Run Tests
